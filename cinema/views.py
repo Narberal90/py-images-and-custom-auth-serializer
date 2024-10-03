@@ -1,11 +1,11 @@
 from datetime import datetime
-from logging import raiseExceptions
 
 from django.db.models import F, Count
 from rest_framework import viewsets, mixins, status
 from rest_framework.decorators import action
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet, ReadOnlyModelViewSet
 
@@ -100,6 +100,7 @@ class MovieViewSet(
 
         if self.action == "retrieve":
             return MovieDetailSerializer
+
         elif self.action == "upload_image":
             return MovieImageSerializer
 
@@ -110,7 +111,7 @@ class MovieViewSet(
         detail=True,
         url_path="upload-image"
     )
-    def upload_image(self, request, pk=None):
+    def upload_image(self, request: Request, pk: int = None) -> Response:
         movie = self.get_object()
         serializer = self.get_serializer(movie, data=request.data)
         serializer.is_valid(raise_exception=True)
